@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haskell Infinite List Visualization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+    }
+    .code-container {
+      display: inline-block;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      padding: 20px;
+      margin: 20px;
+      text-align: left;
+    }
+    .code-line {
+      font-size: 1.2em;
+      margin: 5px 0;
+    }
+    .highlight {
+      background-color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Haskell Infinite List Visualization</h1>
+    <div class="code-container">
+      <div class="code-line" id="line1">naturals = [0..]</div>
+      <div class="code-line" id="line2">sumFirstN n = sum (take n naturals)</div>
+      <div class="code-line" id="eval1"></div>
+      <div class="code-line" id="eval2"></div>
+      <div class="code-line" id="eval3"></div>
+      <div class="code-line" id="eval4"></div>
+    </div>
+    <button id="startButton">Start Evaluation</button>
+  </div>
+
+  <script>
+    document.getElementById('startButton').addEventListener('click', evaluateFunction);
+
+    function evaluateFunction() {
+      const n = 4; // Example input for the function sumFirstN
+      let naturals = Array.from({ length: n }, (_, i) => i); // Simulating [0..n-1]
+      let steps = [
+        { id: 'eval1', duration: 1000, expression: `take ${n} naturals = ${JSON.stringify(naturals)}` },
+        { id: 'eval2', duration: 1000, expression: `sum ${JSON.stringify(naturals)} = ${naturals.reduce((a, b) => a + b, 0)}` }
+      ];
+
+      steps.reduce((promise, step) => {
+        return promise.then(() => highlightStep(step.id, step.duration, step.expression));
+      }, Promise.resolve()).then(() => {
+        document.getElementById('eval2').innerHTML = `sumFirstN(${n}) = ${naturals.reduce((a, b) => a + b, 0)}`;
+      });
+    }
+
+    function highlightStep(id, duration, expression) {
+      return new Promise(resolve => {
+        let element = document.getElementById(id);
+        element.classList.add('highlight');
+        element.innerHTML = expression;
+        setTimeout(() => {
+          element.classList.remove('highlight');
+          resolve();
+        }, duration);
+      });
+    }
+  </script>
+</body>
+</html>
